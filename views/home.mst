@@ -1,0 +1,3 @@
+<h1>Seja bem vido(a)</h1>
+<p>Qualquer mensagem</p>
+<p>Nome: {{ nome }} - Idade: {{ idade }}</p>
