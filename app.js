@@ -1,10 +1,6 @@
 const express = require('express');
-
 // Rotas
-const router = express.Router();
-router.get('/', (req, res)=>{
-    res.send('Olá Mundo! 2.0');
-});
+const router = require('./routes/index');
 
 
 // configurações
