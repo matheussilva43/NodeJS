@@ -14,9 +14,9 @@ app.use((req, res, next)=>{
     next();
 });
 
-app.use('/', router);
-
 app.use(express.json());
+
+app.use('/', router);
 
 app.engine('mst', mustache(__dirname+'/views/portails', '.mst'));
 app.set('view engine', 'mst');
