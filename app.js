@@ -2,10 +2,18 @@ const express = require('express');
 const mustache = require('mustache-express');
 // Rotas
 const router = require('./routes/index');
+const helpers = require('./helpers');
 
 
 // configurações
 const app = express();
+
+app.use((req, res, next)=>{
+    res.locals.h = helpers;
+    res.locals.teste = '123';
+    next();
+});
+
 app.use('/', router);
 
 app.use(express.json());

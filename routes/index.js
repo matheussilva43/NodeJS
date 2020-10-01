@@ -4,7 +4,7 @@ const router = express.Router();
 router.get('/', (req, res)=>{
 
     let obj = {
-        'nome': req.query.nome
+        'pageTitle': 'Titulo de teste'
     };
     res.render('home', obj);
 });
