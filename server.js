@@ -10,8 +10,10 @@ mongoose.connection.on('error', (error)=>{
     console.error("ERRO: "+error.message);
 });
 
-app.set('port', process.env.PORT || 7777);
+// Carregando todos os models
+require('./models/Posts');
 
+app.set('port', process.env.PORT || 7777);
 const server = app.listen(app.get('port'), ()=>{
     console.log('Servidor rodando na porta: '+server.address().port)
 });
