@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slug = require('slug');
 const Post = mongoose.model('Post');
 
 exports.add = (req, res)=>{
@@ -27,14 +28,21 @@ exports.edit = async (req, res)=>{
 };
 
 exports.editAction = async (req, res)=>{
-    const post = await Post.findOneAndUpdate(
-        { slug:req.params.slug },
-        req.body,
-        {
-            new:true, // retornar novo item atualizado
-            runValidators:true
-        }
-    );
+    req.body.slug = slug(req.body.title, {lower:true});
+
+    try {
+        const post = await Post.findOneAndUpdate(
+            { slug:req.params.slug },
+            req.body,
+            {
+                new:true, // retornar novo item atualizado
+                runValidators:true
+            }
+        );
+    }catch (error){
+        req.flash('error', 'Erro: '+error.message);
+        return res.redirect('/post/'+req.params.slug+'/edit');
+    }
 
     req.flash('success', 'Post atualizado com sucesso');
 
