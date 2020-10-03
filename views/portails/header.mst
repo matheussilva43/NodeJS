@@ -1,8 +1,10 @@
 <html>
 <head>
         <title>{{pageTitle}} {{h.defaultPageTitle}}</title>
+        <link rel="stylesheet" href="/assets/css/template.css"/>
  </head>
  <body>
+ <header>
 
 <h1>Cabeçalho</h1>
 <hr/>
@@ -12,16 +14,15 @@
     <li><a href="{{slug}}">{{name}}</a></li>
 {{/h.menu}}
 </ul>
-<hr/>
-
+ </header>
 {{#flashes}}
     {{#success}}
-        <div>{{.}}</div>
+        <div class="warning">{{.}}</div>
     {{/success}}
     {{#error}}
-        <div>{{.}}</div>
+        <div class="warning">{{.}}</div>
     {{/error}}
     {{#info}}
-        <div>{{.}}</div>
+        <div class="warning">{{.}}</div>
     {{/info}}
 {{/flashes}}
