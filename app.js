@@ -5,6 +5,9 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 
+const passport = require('passport');
+const LocalStratgy = require('passport-local').Strategy;
+
 const router = require('./routes/index');
 const helpers = require('./helpers');
 const errorHendler = require('./handlers/errorHendler');
@@ -31,6 +34,14 @@ app.use((req, res, next)=>{
     res.locals.flashes = req.flash();
     next();
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const User = require('./models/User');
+passport.use(new LocalStratgy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use('/', router);
 
