@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const crypto = require('crypto');
 
 exports.login = (req, res)=>{
     res.render('login');
@@ -51,7 +52,7 @@ exports.profile = (req, res)=>{
 };
 
 exports.profileAction = async (req, res)=>{
-    console.log(req.user.name);
+
     try {
         const user = await User.findOneAndUpdate(
             {_id:req.user._id},
@@ -66,4 +67,67 @@ exports.profileAction = async (req, res)=>{
     req.flash('success', 'Dados atualizados com sucesso!');
     res.redirect('/profile');
 
+};
+
+exports.forget = (req, res) => {
+    res.render('forget');
+};
+
+exports.forgetAction = async (req, res) => {
+    const user = await User.findOne({email:req.body.email}).exec();
+    if(!user) {
+        req.flash('error', 'E-mail não cadastrado.');
+        res.redirect('/users/forget');
+        return;
+    }
+
+    user.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+    await user.save();
+
+    const resetLink = `http://${req.headers.host}/users/reset/${user.resetPasswordToken}`;
+
+    req.flash('success', 'Te enviamos um e-mail com instruções.');
+    res.redirect('/users/login');
+};
+
+exports.forgetToken = async (req, res) => {
+    const user = await User.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    }).exec();
+
+    if(!user){
+        req.flash('error', 'Token expirado!');
+        res.redirect('/users/forget');
+        return;
+    }
+
+    res.render('forgetPassword');
+};
+
+exports.forgetTokenAction = async (req, res) => {
+    const user = await User.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    }).exec();
+
+    if(!user){
+        req.flash('error', 'Token expirado!');
+        res.redirect('/users/forget');
+        return;
+    }
+
+    if(req.body.password != req.body['password-confirm']) {
+        req.flash('error', 'Senhas não batem');
+        res.redirect('back');
+        return;
+    }
+
+    user.setPassword(req.body.password, async () =>{
+        await user.save();
+
+        req.flash('success', 'Senha alterada com sucesso!');
+        res.redirect('/');
+    });
 };
