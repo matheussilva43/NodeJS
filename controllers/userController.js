@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const crypto = require('crypto');
+const mailHandler = require('../handlers/mailHandler');
 
 exports.login = (req, res)=>{
     res.render('login');
@@ -85,7 +86,20 @@ exports.forgetAction = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hora
     await user.save();
 
+    const to = `${user.name} <${user.email}>`;
+
     const resetLink = `http://${req.headers.host}/users/reset/${user.resetPasswordToken}`;
+
+    const html = `Testando e-mail com link:<br/> <a href="${resetLink}">Resetar Sua Senha</a>`;
+
+    const text = `Testando e-mail com link:${resetLink}`;
+
+    mailHandler.send({
+       to,
+       subject:'Resetar sua senha',
+       html,
+       text
+    });
 
     req.flash('success', 'Te enviamos um e-mail com instruções.');
     res.redirect('/users/login');
