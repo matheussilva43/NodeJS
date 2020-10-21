@@ -16,8 +16,6 @@ exports.index = async (req, res)=>{
 
     const [ tags, posts ] = await Promise.all([ tagsPromise, postsPromise]);
 
-    console.log(posts);
-
     for(let i in tags) {
         if(tags[i]._id == responseJson.tag) {
             tags[i].class = "selected";
